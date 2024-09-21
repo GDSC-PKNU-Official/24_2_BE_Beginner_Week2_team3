@@ -15,7 +15,8 @@ class PlayList<T extends Media> {
     // 미디어 객체를 재생 목록에 추가
     public void addMedia(T media) {
         medium.add(media);
-        System.out.println("미디어 추가됨: " + media.getTitle() + " - " + media.getArtist());
+        System.out.println("미디어 추가됨: " + media.getTitle() + " - " + media.getArtist() + "별점: " + media.getRating());
+
     }
 
     // 재생 목록에서 미디어 객체를 제목으로 검색하여 삭제
