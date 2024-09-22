@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 class PlayList<T extends Media> {
@@ -20,16 +21,33 @@ class PlayList<T extends Media> {
     }
 
     // 재생 목록에서 미디어 객체를 제목으로 검색하여 삭제
-    //public void deleteMedia(String title) {
-        // todo
-    //    System.out.println("미디어 삭제됨: " + title);
-    //}
+    public void deleteMedia(String title,String mediaType) {
+        try {
+            Optional<T> mediaOptional = findMedia(title, mediaType);
+
+            if (mediaOptional.isPresent()) {
+                medium.remove(mediaOptional.get());
+                System.out.println("미디어 삭제됨: " + title);
+            }
+        }
+        catch (NoSuchElementException e) {
+            System.out.println("해당 제목의 미디어가 없어 삭제가 불가능합니다.");
+        }
+
+    }
+
 
     // 재생 목록에서 제목으로 미디어를 검색
-    //public Optional<T> findMedia(String title) {
-        //todo
-    //    return
-    //}
+    public Optional<T> findMedia(String title,String mediaType) {
+        for (T media : medium) {
+            if (media.getTitle().equalsIgnoreCase(title) && media.getClass().getSimpleName().equalsIgnoreCase(mediaType)) {
+                return Optional.of(media); //media가 null이 아님을 보장될때 Optional 객체 생성됨
+            }
+        }
+        // 미디어가 없을 경우 예외 발생 java 라이브러리에서 제공하는 예외 사용
+        throw new NoSuchElementException("해당 제목의 미디어가 없습니다");
+    }
+
 
     // 재생 목록에 있는 모든 미디어를 나열
     public <M extends Media> void listMedium(Class<M> mediaClass) {
