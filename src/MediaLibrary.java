@@ -1,16 +1,25 @@
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
 
 class MediaLibrary {
     // 전체 미디어 라이브러리를 관리하며, 사용자 명령을 처리하는 로직을 실행함.
     private final PlayList<Media> mediaPlayList;
-
+    private Media currentMedia;
     public static int CURRENT_VOLUME = 50;
     public static final int MAX_VOLUME = 100;
     public static final int MIN_VOLUME = 0;
 
     public MediaLibrary() {
         this.mediaPlayList = new PlayList<>();
+    }
+
+    public void setCurrentMedia(Media media) {
+        this.currentMedia = media;
+    }
+
+    public Media getCurrentMedia() {
+        return this.currentMedia;
     }
 
     void startLogic() {
@@ -50,24 +59,26 @@ class MediaLibrary {
                     break;
 
                 case "delete":
+                    System.out.print("미디어 타입을 입력하세요(song, video): ");
+                    mediaType = scanner.nextLine();
                     System.out.print("삭제할 미디어 제목을 입력하세요: ");
                     String titleToDelete = scanner.nextLine();
-                    mediaPlayList.deleteMedia(titleToDelete);
+                    mediaPlayList.deleteMedia(titleToDelete, mediaType);
                     break;
 
                 case "find":
-                    ystem.out.print("미디어 타입을 입력하세요(song, video): ");
+                    System.out.print("미디어 타입을 입력하세요(song, video): ");
                     mediaType = scanner.nextLine();
                     System.out.print("찾을 미디어 제목을 입력하세요: ");
-                    String finidTitle = scanner.nextLine();
-                    try {
-                        Optional<Media> foundMedia = mediaPlayList.findMedia(finidTitle,mediaType);
-                        Media findMedia = foundMedia.get();  // 여기서 Optional의 get()을 호출합니다.
-                        System.out.println("미디어 찾기 완료: " + findMedia.getTitle() + " - " + findMedia.getArtist());
-                    } catch (NoSuchElementException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    String titleToFind = scanner.nextLine();
+                    Optional<Media> foundMedia = mediaPlayList.findMedia(titleToFind, mediaType);
+                    // foundMedia의 값이 있을 경우에만 미디어 정보를 출력한다.
+                    foundMedia.ifPresentOrElse(
+                            m -> System.out.println("미디어 찾음: " + m.getTitle() + " - " + m.getArtist()),
+                            () -> System.out.println("해당 제목의 미디어가 없습니다.")
+                    );
                     break;
+
                 case "list":
                     System.out.print("미디어 타입을 입력하세요(song, video): ");
                     mediaType = scanner.nextLine();
@@ -86,41 +97,30 @@ class MediaLibrary {
                     System.out.print("재생할 미디어 제목을 입력하세요: ");
                     String titleToPlay = scanner.nextLine();
                     try {
-                        Optional<Media> mediaToPlay = mediaPlayList.findMedia(titleToPlay,mediaType);
-                        Media findMedia = mediaToPlay.get();  // 여기서 Optional의 get()을 호출합니다.
+                        Optional<Media> mediaToPlay = mediaPlayList.findMedia(titleToPlay, mediaType);
+                        Media findMedia = mediaToPlay.get();  // 여기서 Optional의 get()을 호출
+                        setCurrentMedia(findMedia);
                         findMedia.play();
                     } catch (NoSuchElementException e) {
                         System.out.println(e.getMessage());
                     }
                     break;
-
                 
                     // 볼륨 증가, 감소 로직 생각하기
                 case "volumeup":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
-                    if (mediaType.equalsIgnoreCase("song")){
-
-                    }
-                    else if (mediaType.equalsIgnoreCase("video")) {
-
-                    }
-                    else {
-                        System.out.println("지원하지 않는 미디어 타입입니다.");
+                    // 미디어 play()할 때마다 currentMedia를 저장하도록 구현해야 한다.
+                    if (getCurrentMedia() != null) {
+                        getCurrentMedia().volumeUp();  // 현재 재생 중인 미디어의 볼륨 증가
+                    } else {
+                        System.out.println("재생 중인 미디어가 없습니다.");
                     }
                     break;
 
                 case "volumedown":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
-                    if (mediaType.equalsIgnoreCase("song")){
-
-                    }
-                    else if (mediaType.equalsIgnoreCase("video")) {
-
-                    }
-                    else {
-                        System.out.println("지원하지 않는 미디어 타입입니다.");
+                    if (getCurrentMedia() != null) {
+                        getCurrentMedia().volumeDown();  // 현재 재생 중인 미디어의 볼륨 증가
+                    } else {
+                        System.out.println("재생 중인 미디어가 없습니다.");
                     }
                     break;
 
