@@ -81,13 +81,19 @@ class MediaLibrary {
                     break;
 
                 case "play":
+                    System.out.print("미디어 타입을 입력하세요(song, video): ");
+                    mediaType = scanner.nextLine();
                     System.out.print("재생할 미디어 제목을 입력하세요: ");
                     String titleToPlay = scanner.nextLine();
-                    Optional<Media> mediaToPlay = mediaPlayList.findMedia(titleToPlay);
-                    // mediaToPlay의 값이 있을 경우에는 Media 인터페이스의 play() 메서드를 실행한다.
-                    // 메서드 참조
-                    mediaToPlay.ifPresentOrElse(Media::play, () -> System.out.println("해당 제목의 미디어가 없습니다."));
+                    try {
+                        Optional<Media> mediaToPlay = mediaPlayList.findMedia(titleToPlay,mediaType);
+                        Media findMedia = mediaToPlay.get();  // 여기서 Optional의 get()을 호출합니다.
+                        findMedia.play();
+                    } catch (NoSuchElementException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
+
                 
                     // 볼륨 증가, 감소 로직 생각하기
                 case "volumeup":
