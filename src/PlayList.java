@@ -21,7 +21,7 @@ class PlayList<T extends Media> {
     }
 
     // 재생 목록에서 미디어 객체를 제목으로 검색하여 삭제
-    public void deleteMedia(String title,String mediaType) {
+    public void deleteMedia(String title, String mediaType) {
         try {
             Optional<T> mediaOptional = findMedia(title, mediaType);
 
@@ -38,7 +38,7 @@ class PlayList<T extends Media> {
 
 
     // 재생 목록에서 제목으로 미디어를 검색
-    public Optional<T> findMedia(String title,String mediaType) {
+    public Optional<T> findMedia(String title, String mediaType) {
         for (T media : medium) {
             if (media.getTitle().equalsIgnoreCase(title) && media.getClass().getSimpleName().equalsIgnoreCase(mediaType)) {
                 return Optional.of(media); //media가 null이 아님을 보장될때 Optional 객체 생성됨
