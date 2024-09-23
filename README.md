@@ -1,6 +1,8 @@
 # 24_2_BE_Beginner_Week2_team3
 # 2주차 - 자바 활용하기
-
+## **상세 코드 설명 **
+https://meteor-blackberry-9c1.notion.site/3-109a618a3efb8099b655d3b2034090c9?pvs=4
+---
 ## **🌟 과제 개요**
 
 ---
