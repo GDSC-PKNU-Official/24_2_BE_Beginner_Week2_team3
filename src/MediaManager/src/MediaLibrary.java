@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -22,7 +23,7 @@ class MediaLibrary {
         return this.currentMedia;
     }
 
-    void startLogic() {
+    void startLogic() throws IllegalArgumentException {
         // 미리 10개의 미디어를 추가함
         mediaPlayList.addMedia(MediaFactory.createMedia("Song", "HAPPY", "DAY6 (데이식스)", 4));
         mediaPlayList.addMedia(MediaFactory.createMedia("Song", "Supernova", "aespa", 3));
@@ -39,14 +40,21 @@ class MediaLibrary {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("명령어를 입력하세요 (add, delete, find, list, play, volumeup, volumedown): ");
+            System.out.print("명령어를 입력하세요 (add, delete, find, list, play, volumeup, volumedown, get_rating, set_rating): ");
             String command = scanner.nextLine();
-            String mediaType;
+            String mediaType = "";
 
             switch (command.toLowerCase()) {
                 case "add":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.print("미디어 제목을 입력하세요: ");
                     String title = scanner.nextLine();
                     System.out.print("아티스트 이름을 입력하세요: ");
@@ -55,20 +63,36 @@ class MediaLibrary {
                     int rating = Integer.parseInt(scanner.nextLine());
 
                     Media media = MediaFactory.createMedia(mediaType, title, artist, rating);
+
                     mediaPlayList.addMedia(media);
+
                     break;
 
                 case "delete":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.print("삭제할 미디어 제목을 입력하세요: ");
                     String titleToDelete = scanner.nextLine();
                     mediaPlayList.deleteMedia(titleToDelete, mediaType);
                     break;
 
                 case "find":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.print("찾을 미디어 제목을 입력하세요: ");
                     String titleToFind = scanner.nextLine();
                     Optional<Media> foundMedia = mediaPlayList.findMedia(titleToFind, mediaType);
@@ -80,8 +104,15 @@ class MediaLibrary {
                     break;
 
                 case "list":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
                     if (mediaType.equalsIgnoreCase("song")){
                         mediaPlayList.listMedium(Song.class);
                     } else if (mediaType.equalsIgnoreCase("video")) {
@@ -92,8 +123,15 @@ class MediaLibrary {
                     break;
 
                 case "play":
-                    System.out.print("미디어 타입을 입력하세요(song, video): ");
-                    mediaType = scanner.nextLine();
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
                     System.out.print("재생할 미디어 제목을 입력하세요: ");
                     String titleToPlay = scanner.nextLine();
                     try {
@@ -122,6 +160,58 @@ class MediaLibrary {
                     } else {
                         System.out.println("재생 중인 미디어가 없습니다.");
                     }
+                    break;
+
+                case "get_rating":
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    System.out.print("평점을 알고 싶은 미디어 제목을 입력하세요: ");
+                    String titleToFind_0 = scanner.nextLine();
+                    try {
+                        // 사용자가 입력한 타입의 미디어를 찾고 평점을 가져옴
+                        Optional<Media> mediaOp = mediaPlayList.findMedia(titleToFind_0, mediaType);
+                        mediaOp.ifPresent(value -> System.out.println("평점: " + value.getRating()));
+                    }
+                    catch (NoSuchElementException e) {
+                        System.out.println("해당 미디어를 찾을 수 없습니다.");
+                    }
+                    break;
+
+                case "set_rating":
+                    try {
+                        System.out.print("미디어 타입을 입력하세요(song, video): ");
+                        mediaType = scanner.nextLine();
+                        // 올바른 미디어 타입인지 검증
+                        MediaTypeChecker.validateMediaType(mediaType);
+                        break;
+                    } catch (InvalidMediaTypeException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    System.out.print("평점을 수정하고 싶은 미디어 제목을 입력하세요: ");
+                    String titleToFind_01 = scanner.nextLine();
+                    try {
+                        // 사용자가 입력한 타입의 미디어를 찾고 평점을 가져옴
+                        Optional<Media> mediaOp = mediaPlayList.findMedia(titleToFind_01, mediaType);
+                        mediaOp.ifPresent(value -> System.out.println("현재 평점: " + value.getRating()));
+                    }
+                    catch (NoSuchElementException e) {
+                        System.out.println("해당 미디어를 찾을 수 없습니다.");
+                    }
+                    System.out.print("수정할 평점을 입력하세요 ");
+                    String rate = scanner.nextLine();
+                    int rates = Integer.parseInt(rate);
+
+                    Optional<Media> mediaOp = mediaPlayList.findMedia(titleToFind_01, mediaType);
+                    mediaOp.get().setRating(rates);
+                    System.out.println("수정된 평점: " + mediaOp.get().getRating());
+
                     break;
 
                 case "exit":
