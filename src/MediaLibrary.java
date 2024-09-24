@@ -94,12 +94,16 @@ class MediaLibrary {
                     }
                     System.out.print("찾을 미디어 제목을 입력하세요: ");
                     String titleToFind = scanner.nextLine();
-                    Optional<Media> foundMedia = mediaPlayList.findMedia(titleToFind, mediaType);
+                    try {
+                        Optional<Media> foundMedia = mediaPlayList.findMedia(titleToFind, mediaType);
                     // foundMedia의 값이 있을 경우에만 미디어 정보를 출력한다.
                     foundMedia.ifPresentOrElse(
                             m -> System.out.println("미디어 찾음: " + m.getTitle() + " - " + m.getArtist()),
                             () -> System.out.println("해당 제목의 미디어가 없습니다.")
-                    );
+                    );}
+                    catch(NoSuchElementException e){
+                        System.out.println(e.getMessage());
+                };
                     break;
 
                 case "list":
